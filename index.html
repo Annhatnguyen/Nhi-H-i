@@ -1,0 +1,289 @@
+import turtle
+import random
+import math
+import time
+
+# ==========================================
+# SCREEN
+# ==========================================
+screen = turtle.Screen()
+screen.setup(1000, 750)
+screen.bgcolor("#050510")
+screen.title("For Nhi Húi")
+screen.tracer(0)
+
+# ==========================================
+# STARS
+# ==========================================
+star_pen = turtle.Turtle()
+star_pen.hideturtle()
+star_pen.penup()
+
+stars = []
+
+for _ in range(100):
+    stars.append({
+        "x": random.randint(-480, 480),
+        "y": random.randint(-350, 350),
+        "size": random.randint(2, 5),
+        "phase": random.uniform(0, 2 * math.pi)
+    })
+
+
+def draw_stars(frame):
+    star_pen.clear()
+
+    for star in stars:
+
+        brightness = math.sin(
+            frame * 0.08 + star["phase"]
+        )
+
+        if brightness > 0.5:
+            star_pen.color("white")
+        elif brightness > 0:
+            star_pen.color("#ccccdd")
+        else:
+            star_pen.color("#777799")
+
+        star_pen.goto(star["x"], star["y"])
+        star_pen.dot(star["size"])
+
+
+# ==========================================
+# TITLE
+# ==========================================
+title = turtle.Turtle()
+title.hideturtle()
+title.penup()
+title.color("#ffd6e0")
+title.goto(0, 300)
+
+title.write(
+    "A muốn làm 1 xíu gì đó đặt biệt cho em",
+    align="center",
+    font=("Arial", 20, "italic")
+)
+
+
+# ==========================================
+# HEART MATHEMATICAL EQUATION
+# ==========================================
+heart_points = []
+
+for degree in range(361):
+
+    t = math.radians(degree)
+
+    x = 16 * math.sin(t) ** 3
+
+    y = (
+        13 * math.cos(t)
+        - 5 * math.cos(2 * t)
+        - 2 * math.cos(3 * t)
+        - math.cos(4 * t)
+    )
+
+    # Scale and move upward
+    heart_points.append(
+        (x * 17, y * 17 + 20)
+    )
+
+
+# ==========================================
+# DRAW HEART SLOWLY
+# ==========================================
+heart = turtle.Turtle()
+heart.hideturtle()
+heart.speed(0)
+heart.pensize(5)
+heart.color("#ff8fa3")
+
+heart.penup()
+heart.goto(heart_points[0])
+heart.pendown()
+
+for i, point in enumerate(heart_points):
+
+    heart.goto(point)
+
+    if i % 3 == 0:
+        draw_stars(i)
+
+    screen.update()
+    time.sleep(0.006)
+
+
+# ==========================================
+# FILL HEART
+# ==========================================
+heart.clear()
+
+heart.penup()
+heart.goto(heart_points[0])
+heart.pendown()
+
+heart.color("#ff758f")
+heart.fillcolor("#c9184a")
+
+heart.begin_fill()
+
+for point in heart_points:
+    heart.goto(point)
+
+heart.end_fill()
+
+screen.update()
+
+
+# ==========================================
+# GLOW EFFECT
+# ==========================================
+glow = turtle.Turtle()
+glow.hideturtle()
+glow.speed(0)
+glow.penup()
+
+# Draw several outlines around heart
+for scale in [17.8, 18.5, 19.2]:
+
+    glow.color("#ffb3c6")
+    glow.pensize(1)
+
+    first = True
+
+    for degree in range(361):
+
+        t = math.radians(degree)
+
+        x = 16 * math.sin(t) ** 3
+
+        y = (
+            13 * math.cos(t)
+            - 5 * math.cos(2 * t)
+            - 2 * math.cos(3 * t)
+            - math.cos(4 * t)
+        )
+
+        if first:
+            glow.penup()
+            glow.goto(x * scale, y * scale + 20)
+            glow.pendown()
+            first = False
+        else:
+            glow.goto(x * scale, y * scale + 20)
+
+
+# ==========================================
+# NHI HÚI
+# ==========================================
+name = turtle.Turtle()
+name.hideturtle()
+name.penup()
+
+name.goto(0, 40)
+name.color("white")
+
+name.write(
+    "Nhi Húi",
+    align="center",
+    font=("Arial", 44, "bold")
+)
+
+
+# ==========================================
+# SMALL HEART UNDER NAME
+# ==========================================
+small_heart = turtle.Turtle()
+small_heart.hideturtle()
+small_heart.penup()
+small_heart.goto(0, -25)
+small_heart.color("#ffd6e0")
+
+small_heart.write(
+    "♥",
+    align="center",
+    font=("Arial", 35, "bold")
+)
+
+
+# ==========================================
+# MESSAGE
+# ==========================================
+message = turtle.Turtle()
+message.hideturtle()
+message.penup()
+message.color("#ffd6e0")
+
+message.goto(0, -285)
+
+message.write(
+    "E đừng buồn, đừng giận a nhiều nữa nha. Thương e.",
+    align="center",
+    font=("Arial", 17, "italic")
+)
+
+
+message.goto(0, -320)
+
+message.write(
+    "A muốn nói a xin lỗi e về tất cả.",
+    align="center",
+    font=("Arial", 15, "normal")
+)
+
+
+# ==========================================
+# FLOATING HEART PARTICLES
+# ==========================================
+particles = []
+
+for _ in range(15):
+
+    p = turtle.Turtle()
+    p.hideturtle()
+    p.penup()
+
+    particles.append({
+        "turtle": p,
+        "x": random.randint(-400, 400),
+        "y": random.randint(-300, 250),
+        "speed": random.uniform(0.3, 1.2),
+        "size": random.randint(10, 20)
+    })
+
+
+# ==========================================
+# ANIMATION
+# ==========================================
+frame = 0
+
+while True:
+
+    draw_stars(frame)
+
+    for p in particles:
+
+        pen = p["turtle"]
+        pen.clear()
+
+        p["y"] += p["speed"]
+
+        # Reset after reaching top
+        if p["y"] > 320:
+            p["y"] = -320
+            p["x"] = random.randint(-450, 450)
+
+        pen.goto(p["x"], p["y"])
+        pen.color("#ff8fa3")
+
+        pen.write(
+            "♥",
+            align="center",
+            font=("Arial", p["size"], "normal")
+        )
+
+    screen.update()
+
+    frame += 1
+    time.sleep(0.04)
